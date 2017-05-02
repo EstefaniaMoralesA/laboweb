@@ -1,0 +1,8 @@
+Table: categoria
+Column: id, tipo: nill
+Column: nombre, tipo: varchar
+Column: descripcion, tipo: varchar
+Table: cliente
+Column: id, tipo: nill
+Column: nombre, tipo: varchar
+Column: numeroCliente, tipo: varchar

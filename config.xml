@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Abc>
+    <ConnectionProperties>
+        <DatabaseName>abc</DatabaseName>
+        <UserName>root</UserName>
+        <Password></Password>
+        <Server>localhost</Server>
+    </ConnectionProperties>
+    <Configurations>
+        <ConfigPath>config</ConfigPath>
+        <Salt>
+            <Login>estefania</Login>
+            <Request>zxcv</Request>
+        </Salt>
+    </Configurations>
+    <Table Name="categoria">
+        <Disable>id</Disable>
+        <HideReg>2,3</HideReg>
+        <ShowId>false</ShowId>
+        <ShowNew>true</ShowNew>
+        <ShowEdit>false</ShowEdit>
+        <ShowDelete>false</ShowDelete>
+        <Headers>nombre-Nombre</Headers>
+    </Table>
+    <Table Name="cliente">
+        <Disable>id</Disable>
+        <HideReg>1,4</HideReg>
+        <Options Campo="genero">0-masculino,1-femenino</Options>
+    </Table>
+</Abc>

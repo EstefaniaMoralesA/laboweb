@@ -1,0 +1,28 @@
+C:\Users\safern\Desktop\web\obj\Debug\ABC.csprojResolveAssemblyReference.cache
+C:\Users\safern\Desktop\web\bin\Debug\ABC.exe
+C:\Users\safern\Desktop\web\bin\Debug\ABC.pdb
+C:\Users\safern\Desktop\web\obj\Debug\ABC.exe
+C:\Users\safern\Desktop\web\obj\Debug\ABC.pdb
+C:\Users\safern\Desktop\web\bin\Debug\config.txt
+C:\Users\estef\Desktop\Web Project\web\obj\Debug\ABC.exe
+C:\Users\estef\Desktop\Web Project\web\obj\Debug\ABC.pdb
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\config.xml
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\ABC.exe
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\ABC.pdb
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\Newtonsoft.Json.dll
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\Newtonsoft.Json.xml
+C:\Users\estef\Desktop\Web Project\web\obj\Debug\ABC.csprojResolveAssemblyReference.cache
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\ABC.exe.config
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\MySql.Data.dll
+C:\Users\estef\Desktop\Web Project\web\bin\Debug\Database.php
+C:\xampp\htdocs\Web Project\web\bin\Debug\config.xml
+C:\xampp\htdocs\Web Project\web\bin\Debug\Database.php
+C:\xampp\htdocs\Web Project\web\bin\Debug\ABC.exe.config
+C:\xampp\htdocs\Web Project\web\bin\Debug\ABC.exe
+C:\xampp\htdocs\Web Project\web\bin\Debug\ABC.pdb
+C:\xampp\htdocs\Web Project\web\bin\Debug\MySql.Data.dll
+C:\xampp\htdocs\Web Project\web\bin\Debug\Newtonsoft.Json.dll
+C:\xampp\htdocs\Web Project\web\bin\Debug\Newtonsoft.Json.xml
+C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.csprojResolveAssemblyReference.cache
+C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.exe
+C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.pdb
