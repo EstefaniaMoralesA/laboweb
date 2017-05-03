@@ -53,7 +53,7 @@ header('Location: cliente.php');
 <input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='numeroCliente' placeholder='numeroCliente' type='text' value=''>
 </div>
 <div class='form-group'>
-<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='idCategoria' type='number' value=''>
+<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='Categoria' type='number' value=''>
 </div>
 <div class='form-group'>
 <select name='genero'>

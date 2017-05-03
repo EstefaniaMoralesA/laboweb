@@ -48,7 +48,11 @@ namespace ABC
 
         public bool IsPrimaryKey { get; set; } = false;
         public bool IsForeignKey { get; set; } = false;
+
+        public bool IsForeignKeyMapped { get; set; } = false;
         
+        public ForeignKey ForeignKeyMap { get; set; }
+
         public Dictionary<string, string> Options { get; set; } = new Dictionary<string, string>();
 
         public bool IsDropdown => Options.Count > 0;
@@ -57,5 +61,12 @@ namespace ABC
         {
             visitor.Visit(this);
         }
+    }
+
+    public struct ForeignKey
+    {
+        public Table ToTable { get; set; }
+
+        public string Column { get; set; }
     }
 }

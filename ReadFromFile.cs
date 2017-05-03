@@ -82,6 +82,24 @@ namespace ABC
             }
         }
 
+        static void parseForeignKey(string[] vals, ref Table table)
+        {
+            string nameField = vals[0];
+            string value = vals[1];
+            if (!table.Columns[nameField].IsForeignKey)
+            {
+                Console.WriteLine($"Error: column: {nameField} in table: {table.Name} is not a foreign key");
+                Environment.Exit(1);
+            }
+            table.Columns[nameField].IsForeignKeyMapped = true;
+            table.Columns[nameField].ForeignKeyMap = new ForeignKey
+            {
+                ToTable = tables[table.Columns[nameField].ForeignKeyMap.ToTable.Name],
+                Column = value
+            };
+
+        }
+
         static void parseTable(JToken table)
         {
             string nameTable = table["@Name"].Value<string>();
@@ -175,6 +193,16 @@ namespace ABC
                     {
                         parseOption(JToken.Parse(optionsArrayString), ref currentTable);
                     }
+                }
+            }
+
+            if (table["ForeignKeys"] != null)
+            {
+                string value = table["ForeignKeys"].Value<string>();
+                string[] columns = value.Split(',');
+                foreach (var column in columns)
+                {
+                    parseForeignKey(column.Split('-'), ref currentTable);
                 }
             }
         }

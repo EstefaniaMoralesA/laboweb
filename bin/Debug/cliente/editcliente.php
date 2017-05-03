@@ -65,7 +65,7 @@ $result = getValues($db, $pk);
 <input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='numeroCliente' placeholder='numeroCliente' type='text' value='<?php echo $result['numeroCliente'] ?>'>
 </div>
 <div class='form-group'>
-<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='idCategoria' type='number' value='<?php echo $result['idCategoria'] ?>'>
+<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='Categoria' type='number' value='<?php echo $result['idCategoria'] ?>'>
 </div>
 <div class='form-group'>
 <select name='genero'>
