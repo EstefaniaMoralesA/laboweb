@@ -1,5 +1,15 @@
 <?php
     include_once("../header.php");
+if(!empty( $_GET['pk'])){
+$query = "DELETE FROM categoria WHERE id = " . '' . "1QQ";
+$result = $db->squery_rows($query, array($_GET['pk']));
+if($result == 1){
+header('Location: categoria.php');
+}
+else{
+echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
+}
+}
 ?>
 <div class='row' style='margin-top:70px;'>
 <ul class='nav nav-tabs'>
@@ -15,15 +25,17 @@
 <tr>
 <th>Nombre</th>
 <th>descripcion</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <?php
-$resultSet = $db->squery_rows('SELECT nombre,descripcion FROM categoria WHERE id NOT IN (2,3)', array());
-while($data = mysqli_fetch_row($resultSet)){
+$resultSet = $db->squery_rows('SELECT id,nombre,descripcion FROM categoria WHERE id NOT IN (3)', array());
+while($data = mysqli_fetch_assoc($resultSet)){
 echo '<tr>';
-foreach($data as $col){
-echo '<td>'.$col.'</td>';}
+echo '<td>'.$data['nombre'].'</td>';
+echo '<td>'.$data['descripcion'].'</td>';
+echo '<td><a href="editcategoria.php?pk='.$data['id'].'" class="btn btn-primary" style="padding-left: 46px; padding-right: 46px;">Editar</a></td>';
 echo '</tr>';}
 ?>
 </tbody>

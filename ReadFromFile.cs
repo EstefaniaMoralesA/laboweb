@@ -53,6 +53,14 @@ namespace ABC
                         table.Accept(visitor);
                     }
                 }
+                if(table.ShowEdit)
+                {
+                    using (StreamWriter sw = new StreamWriter(Path.Combine(table.FullDirectoryPath, $"edit{table.Name}.php")))
+                    {
+                        EditVisitor visitor = new EditVisitor(sw, table);
+                        table.Accept(visitor);
+                    }
+                }
                 
             }
 

@@ -15,10 +15,10 @@
     </Configurations>
     <Table Name="categoria">
         <Disable>id</Disable>
-        <HideReg>2,3</HideReg>
+        <HideReg>3</HideReg>
         <ShowId>false</ShowId>
         <ShowNew>true</ShowNew>
-        <ShowEdit>false</ShowEdit>
+        <ShowEdit>true</ShowEdit>
         <ShowDelete>false</ShowDelete>
         <Headers>nombre-Nombre</Headers>
     </Table>

@@ -7,6 +7,8 @@ namespace ABC
     {
         public string ConfigDirectory { get; set; }
 
+        public string WildCard => "1QQ";
+
         public string FullDirectoryPath { get; set;}
 
         public string SaltLogin { get; set; }

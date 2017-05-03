@@ -47,13 +47,8 @@ namespace ABC
             StringBuilder sb = new StringBuilder();
             int i = 0;
             foreach(var col in table.Columns.Values)
-            {
-                if(col.IsPrimaryKey && !table.ShowId)
-                {
-                    continue;
-                }
-                
-                if(!col.Hide){
+            {   
+                if(!col.Hide || col.IsPrimaryKey){
                     if(i > 0)
                     {
                         sb.Append(",");
@@ -92,6 +87,22 @@ namespace ABC
             {
                 _writer.WriteLine($"<a href='add{table.Name.ToLower()}.php' class='btn btn-success' style='margin-top: 40px; padding-left: 39px; padding-right: 39px;'>Añadir {table.Name}</a>");
             }
+        }
+
+        public string GetColumnArray(Column col)
+        {
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            foreach(var option in col.Options)
+            {
+                if(i > 0)
+                {
+                     sb.Append(",");
+                }
+                sb.Append($"\"{option.Key}\" => \"{option.Value}\"");
+                i++;
+            }
+            return sb.ToString();
         }
 
         public void ConstructTable(Table table)
@@ -133,15 +144,30 @@ namespace ABC
                 _writer.WriteLine("<tbody>");
                 _writer.WriteLine("<?php");
                 _writer.WriteLine($"$resultSet = $db->squery_rows('SELECT {GetSelectQuery(table)} FROM {table.Name} {GetWhereClause(table)}', array());");
-                _writer.WriteLine("while($data = mysqli_fetch_row($resultSet)){");
+                _writer.WriteLine("while($data = mysqli_fetch_assoc($resultSet)){");
                 _writer.WriteLine("echo '<tr>';");
-                _writer.WriteLine("foreach($data as $col){");
-                _writer.WriteLine("echo '<td>'.$col.'</td>';}");
+                foreach(var col in table.Columns.Values)
+                {
+                    if(col.IsPrimaryKey && !table.ShowId)
+                    {
+                        continue;
+                    }
+                    
+                    if(!col.Hide){
+                        if(col.IsDropdown){
+                            _writer.WriteLine($"$array = array({GetColumnArray(col)});");
+                            _writer.WriteLine($"echo '<td>'.$array[$data['{col.Name}']].'</td>';");
+                        }
+                        else{
+                            _writer.WriteLine($"echo '<td>'.$data['{col.Name}'].'</td>';");
+                        }
+                    }
+                }
                 if(table.ShowEdit){
-                    _writer.WriteLine("echo '<td><a class=\"btn btn-primary\" style=\"padding-left: 46px; padding-right: 46px;\">Editar</a></td>';");
+                    _writer.WriteLine($"echo '<td><a href=\"edit{table.Name}.php?pk='.$data['{table.PrimaryKey.Name}'].'\" class=\"btn btn-primary\" style=\"padding-left: 46px; padding-right: 46px;\">Editar</a></td>';");
                 }
                 if(table.ShowDelete){
-                    _writer.WriteLine("echo '<td><a class=\"btn btn-danger\" style=\"padding-left: 39px; padding-right: 39px;\">Eliminar</a></td>';");
+                    _writer.WriteLine($"echo '<td><a href=\"{table.Name}.php?pk='.$data['{table.PrimaryKey.Name}'].'\"  onclick=\"return confirm(\\'Seguro quieres borrar este registro?\\');\" class=\"btn btn-danger\" style=\"padding-left: 39px; padding-right: 39px;\">Eliminar</a></td>';");
                 }
                 _writer.WriteLine("echo '</tr>';}");
                 _writer.WriteLine("?>");
@@ -154,7 +180,7 @@ namespace ABC
 
         public void Visit(Table table)
         {
-            WriteHeader();
+            WriteHeader(table);
             ConstructTabs(table);
             AddButon(table);
             ConstructTable(table);
@@ -198,7 +224,7 @@ namespace ABC
             }
         }
 
-        private void WriteHeader()
+        private void WriteHeader(Table table)
         {
             _writer.WriteLine("<?php");
             Indent();
@@ -206,6 +232,16 @@ namespace ABC
             _writer.WriteLine($"include_once(\"../header.php\");");
             Unindent();
             WriteIndentation();
+            _writer.WriteLine("if(!empty( $_GET['pk'])){");
+            _writer.WriteLine($"$query = \"DELETE FROM {table.Name} WHERE {table.PrimaryKey.Name} = \" . '' . \"{SharedContainer.AppConfigInstance.WildCard}\";");
+            _writer.WriteLine($"$result = $db->squery_rows($query, array($_GET['pk']));");
+            _writer.WriteLine("if($result == 1){");
+            _writer.WriteLine($"header('Location: {table.Name}.php');");
+            _writer.WriteLine("}");
+            _writer.WriteLine("else{");
+            _writer.WriteLine("echo 'ERROR al eliminar registro. Vuelva a intentarlo.';");
+            _writer.WriteLine("}");
+            _writer.WriteLine("}");
             _writer.WriteLine("?>");
         }
 

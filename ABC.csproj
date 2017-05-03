@@ -79,6 +79,7 @@
     <Compile Include="AppConfig.cs" />
     <Compile Include="ReadTableVisitor.cs" />
     <Compile Include="AddVisitor.cs" />
+    <Compile Include="EditVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.xml">

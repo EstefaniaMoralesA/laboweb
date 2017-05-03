@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ABC
 {
-    public class AddVisitor : IVisitor
+    public class EditVisitor : IVisitor
     {
         private TextWriter _writer;
         private Table _table;
@@ -13,7 +13,7 @@ namespace ABC
 
         private string _indent = "    ";
 
-        public AddVisitor(TextWriter writer, Table table)
+        public EditVisitor(TextWriter writer, Table table)
         {
             _writer = writer;
             _table = table;
@@ -36,18 +36,22 @@ namespace ABC
             switch(column.DataType)
             {
                 case ColumnDataType.varchar:
-                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='text' value=''>");
+                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='text' value='<?php echo $result['{column.Name}'] ?>'>");
                 break;
                 case ColumnDataType.numInt:
-                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='number' value=''>");
+                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='number' value='<?php echo $result['{column.Name}'] ?>'>");
                 break;
                 case ColumnDataType.tinyInt:
                     if(column.IsDropdown){
                         _writer.WriteLine($"<select name='{column.Name}'>");
-                        _writer.WriteLine($"<option selected disabled value=''>Selecciona {column.Name}</option>");                        
+                        _writer.WriteLine($"");                        
                         foreach(var option in column.Options)
                         {
+                            _writer.WriteLine($"<?php if($result['{column.Name}'] == {option.Key}) : ?>");
+                            _writer.WriteLine($"<option selected value='<?php echo $result['{column.Name}']; ?>'>{option.Value}</option>");
+                            _writer.WriteLine("<?php else : ?>");
                             _writer.WriteLine($"<option value='{option.Key}'>{option.Value}</option>");
+                            _writer.WriteLine("<?php endif; ?>");
                         }
                         _writer.WriteLine("</select>");
                     }
@@ -61,7 +65,7 @@ namespace ABC
         public void WriteContent(Table table)
         {
             _writer.WriteLine("<div class='col-lg-10 col-lg-offset-1'>");
-            _writer.WriteLine($"<form action='add{table.Name}.php' method='post'>");
+            _writer.WriteLine($"<form action='edit{table.Name}.php?pk=<?php echo $pk; ?>' method='post'>");
             foreach(var col in table.Columns.Values)
             {
                 Visit(col);
@@ -109,11 +113,14 @@ namespace ABC
                 {
                     sb.Append(',');
                 }
-                sb.Append($"`{col.Name}`");
-                i++;
+                if(!col.ReadOnly)
+                {
+                    sb.Append($"`{col.Name}`");
+                    i++;
+                }
             }
             return sb.ToString();
-        }
+        } 
 
         private string GetWildCardString(Table table)
         {
@@ -125,13 +132,16 @@ namespace ABC
                 {
                     sb.Append(',');
                 }
-                sb.Append($"'{SharedContainer.AppConfigInstance.WildCard}'");
-                i++;
+                if(!col.ReadOnly && !col.IsPrimaryKey)
+                {
+                    sb.Append($"{col.Name} = '{SharedContainer.AppConfigInstance.WildCard}'");
+                    i++;
+                }
             }
             return sb.ToString();
         }
 
-        private string GetValuesToInsert(Table table)
+        private string GetValuesToEdit(Table table)
         {
             int i = 0;
             StringBuilder sb = new StringBuilder();
@@ -141,16 +151,13 @@ namespace ABC
                 {
                     sb.Append(',');
                 }
-                if(col.IsPrimaryKey)
-                {
-                    sb.Append("NULL");
-                }
-                else 
+                if(!col.ReadOnly && !col.IsPrimaryKey)
                 {
                     sb.Append($"${col.Name}");
+                    i++;
                 }
-                i++;
             }
+            sb.Append(", $pk");
             return sb.ToString();
         }
 
@@ -162,6 +169,16 @@ namespace ABC
             _writer.WriteLine($"include_once(\"../header.php\");");
             Unindent();
             WriteIndentation();
+            _writer.WriteLine("$result = NULL;");
+            _writer.WriteLine("if(empty($_GET['pk'])){");
+            _writer.WriteLine("echo 'ERROR no se ha encontrado un registro para editar'; exit();}");
+            _writer.WriteLine("$pk = $_GET['pk'];");
+
+            _writer.WriteLine("function getValues($db, $pk){");
+            _writer.WriteLine($"$query = \"SELECT {GetColumnsString(table)} FROM {table.Name} WHERE {table.PrimaryKey.Name} = \" . '' . \"{SharedContainer.AppConfigInstance.WildCard}\";");
+            _writer.WriteLine($"return $db->qarray($query, array($pk));");
+            _writer.WriteLine("}");
+
             _writer.WriteLine("if(!empty($_POST)){");
             _writer.WriteLine("$error = 0;");
             foreach(var col in table.Columns.Values)
@@ -184,18 +201,25 @@ namespace ABC
                 }
             }
             _writer.WriteLine("if($error == 1){");
+            _writer.WriteLine("$result = getValues($db, $pk);");
             _writer.WriteLine("echo '<div class=\"alert alert-danger\">ERROR se deben de llenar todos los campos de la forma.</div>';}");
             _writer.WriteLine("else{");
-            _writer.WriteLine($"$query = \"INSERT INTO {table.Name}({GetColumnsString(table)}) VALUES ({GetWildCardString(table)})\";");
-            _writer.WriteLine($"$result = $db->squery_rows($query, array({GetValuesToInsert(table)}));");
+            _writer.WriteLine($"$query = \"UPDATE {table.Name} SET {GetWildCardString(table)} WHERE {table.PrimaryKey.Name} = \" . '' . \"{SharedContainer.AppConfigInstance.WildCard}\";");
+            _writer.WriteLine($"$result = $db->squery_rows($query, array({GetValuesToEdit(table)}));");
             _writer.WriteLine("if($result == 1){");
             _writer.WriteLine($"header('Location: {table.Name}.php');");
             _writer.WriteLine("}");
             _writer.WriteLine("}");
             _writer.WriteLine("}");
+
+            _writer.WriteLine("else{");
+            _writer.WriteLine("$result = getValues($db, $pk);");
+            _writer.WriteLine("}");
+        
+
             _writer.WriteLine("?>");
             _writer.WriteLine("<div class='col-sm-12' style='margin-top: 70px; text-align: center;'>");
-            _writer.WriteLine($"<h2 style='margin-top: 0px; font-weight: bold; font-size: 35px;color: #E42B22;'>Añadir {table.Name}</h2>");
+            _writer.WriteLine($"<h2 style='margin-top: 0px; font-weight: bold; font-size: 35px;color: #E42B22;'>Editar {table.Name}</h2>");
             _writer.WriteLine("</div>");
         }
 

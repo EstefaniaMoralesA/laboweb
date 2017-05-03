@@ -1,5 +1,15 @@
 <?php
     include_once("../header.php");
+if(!empty( $_GET['pk'])){
+$query = "DELETE FROM cliente WHERE id = " . '' . "1QQ";
+$result = $db->squery_rows($query, array($_GET['pk']));
+if($result == 1){
+header('Location: cliente.php');
+}
+else{
+echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
+}
+}
 ?>
 <div class='row' style='margin-top:70px;'>
 <ul class='nav nav-tabs'>
@@ -25,12 +35,16 @@
 <tbody>
 <?php
 $resultSet = $db->squery_rows('SELECT id,nombre,numeroCliente,idCategoria,genero FROM cliente WHERE id NOT IN (1,4)', array());
-while($data = mysqli_fetch_row($resultSet)){
+while($data = mysqli_fetch_assoc($resultSet)){
 echo '<tr>';
-foreach($data as $col){
-echo '<td>'.$col.'</td>';}
-echo '<td><a class="btn btn-primary" style="padding-left: 46px; padding-right: 46px;">Editar</a></td>';
-echo '<td><a class="btn btn-danger" style="padding-left: 39px; padding-right: 39px;">Eliminar</a></td>';
+echo '<td>'.$data['id'].'</td>';
+echo '<td>'.$data['nombre'].'</td>';
+echo '<td>'.$data['numeroCliente'].'</td>';
+echo '<td>'.$data['idCategoria'].'</td>';
+$array = array("0" => "masculino","1" => "femenino");
+echo '<td>'.$array[$data['genero']].'</td>';
+echo '<td><a href="editcliente.php?pk='.$data['id'].'" class="btn btn-primary" style="padding-left: 46px; padding-right: 46px;">Editar</a></td>';
+echo '<td><a href="cliente.php?pk='.$data['id'].'"  onclick="return confirm(\'Seguro quieres borrar este registro?\');" class="btn btn-danger" style="padding-left: 39px; padding-right: 39px;">Eliminar</a></td>';
 echo '</tr>';}
 ?>
 </tbody>
