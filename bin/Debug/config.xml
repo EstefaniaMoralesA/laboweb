@@ -15,8 +15,7 @@
     </Configurations>
     <Table Name="categoria">
         <Disable>id</Disable>
-        <HideReg>3</HideReg>
-        <ShowId>false</ShowId>
+        <ShowId>true</ShowId>
         <ShowNew>true</ShowNew>
         <ShowEdit>true</ShowEdit>
         <ShowDelete>false</ShowDelete>
@@ -25,7 +24,7 @@
     <Table Name="cliente">
         <Disable>id</Disable>
         <Headers>idCategoria-Categoria</Headers>
-        <ForeignKeys>idCategoria-nombre</ForeignKeys>
+        <ForeignKeys>idCategoria-descripcion</ForeignKeys>
         <Options Campo="genero">0-masculino,1-femenino</Options>
     </Table>
 </Abc>

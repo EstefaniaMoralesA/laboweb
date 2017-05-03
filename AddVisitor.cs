@@ -28,7 +28,7 @@ namespace ABC
 
         public void Visit(Column column)
         {
-            if(column.ReadOnly)
+            if(column.ReadOnly || column.Hide)
             {
                 return;
             }

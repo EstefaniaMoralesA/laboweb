@@ -58,7 +58,7 @@ $fkresult = $db->squery_rows($fkquery, array()); ?>
 <select name='idCategoria'>
 <option selected disabled value=''>Selecciona Categoria</option>
 <?php while($data = mysqli_fetch_assoc($fkresult)) : ?>
-<option value="<?php echo $data['id'];?>"><?php echo $data['nombre']; ?></option>
+<option value="<?php echo $data['id'];?>"><?php echo $data['descripcion']; ?></option>
 <?php endwhile; ?>
 </select>
 </div>

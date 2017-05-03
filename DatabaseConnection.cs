@@ -34,7 +34,6 @@ namespace ABC
             try
             {
                 conn.Open();
-                Console.WriteLine(conn.State);
                 DataTable dt = conn.GetSchema("Tables");
                 foreach(DataRow row in dt.Rows)
                 {
@@ -56,11 +55,10 @@ namespace ABC
             try
             {
                 conn.Open();
-                Console.WriteLine(conn.State);
                 string query = $"SELECT COLUMN_NAME, DATA_TYPE, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '{tableName}' AND table_schema = '{DatabaseName}'";
                 MySqlCommand cmd= new MySqlCommand(query ,conn);
                 MySqlDataReader sdr = cmd.ExecuteReader();
-                Console.WriteLine(tableName);
+                Console.WriteLine($"Reading Table: {tableName}");
                 while(sdr.Read())
                 {
                     columns.Add(sdr[0].ToString(), new Column(sdr[0].ToString(), sdr[1].ToString()));
@@ -77,10 +75,12 @@ namespace ABC
                     string columnName = sdr[0].ToString();
                     if(sdr[1].ToString().Equals("PRIMARY KEY"))
                     {
+                        Console.WriteLine($"Column {columnName}: is primary key.");
                         columns[columnName].IsPrimaryKey = true;
                     }
                     else
                     {
+                        Console.WriteLine($"Column {columnName}: is foreign key to table {sdr[2].ToString()}.");
                         columns[columnName].IsForeignKey = true;
                         columns[columnName].ForeignKeyMap = new ForeignKey { ToTable = new Table(sdr[2].ToString()), Column = null};
                     }

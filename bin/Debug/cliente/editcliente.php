@@ -73,7 +73,7 @@ $value = $data['id'];
 $selected='';
 if($value == $result['idCategoria'])
 { $selected = 'selected';} ?>
-<option <?php echo $selected; ?> value="<?php echo $value;?>"><?php echo $data['nombre']; ?></option>
+<option <?php echo $selected; ?> value="<?php echo $value;?>"><?php echo $data['descripcion']; ?></option>
 <?php endwhile; ?>
 </select>
 </div>

@@ -28,7 +28,7 @@ namespace ABC
 
         public void Visit(Column column)
         {
-            if(column.ReadOnly)
+            if(column.ReadOnly || column.Hide)
             {
                 return;
             }
@@ -136,11 +136,12 @@ namespace ABC
                 {
                     sb.Append(',');
                 }
-                if(!col.ReadOnly)
+                if(col.ReadOnly)
                 {
-                    sb.Append($"`{col.Name}`");
-                    i++;
+                    continue;
                 }
+                sb.Append($"`{col.Name}`");
+                i++;
             }
             return sb.ToString();
         } 
@@ -206,7 +207,7 @@ namespace ABC
             _writer.WriteLine("$error = 0;");
             foreach(var col in table.Columns.Values)
             {
-                if(!col.IsPrimaryKey)
+                if(!col.IsPrimaryKey && !col.Hide)
                 {
                     if(col.IsDropdown || col.IsForeignKey)
                     {

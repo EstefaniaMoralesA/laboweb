@@ -23,6 +23,7 @@ echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
 <table class='table'>
 <thead>
 <tr>
+<th>id</th>
 <th>Nombre</th>
 <th>descripcion</th>
 <th></th>
@@ -30,9 +31,10 @@ echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
 </thead>
 <tbody>
 <?php
-$resultSet = $db->squery_rows('SELECT id,nombre,descripcion FROM categoria WHERE id NOT IN (3)', array());
+$resultSet = $db->squery_rows('SELECT id,nombre,descripcion FROM categoria ', array());
 while($data = mysqli_fetch_assoc($resultSet)){
 echo '<tr>';
+echo '<td>'.$data['id'].'</td>';
 echo '<td>'.$data['nombre'].'</td>';
 echo '<td>'.$data['descripcion'].'</td>';
 echo '<td><a href="editcategoria.php?pk='.$data['id'].'" class="btn btn-primary" style="padding-left: 46px; padding-right: 46px;">Editar</a></td>';
