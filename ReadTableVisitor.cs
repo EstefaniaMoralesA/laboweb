@@ -154,6 +154,15 @@ namespace ABC
                     }
                     
                     if(!col.Hide){
+                        if(col.IsForeignKey && col.IsForeignKeyMapped)
+                        {
+                            ForeignKey key = col.ForeignKeyMap;
+                            _writer.WriteLine($"$fkquery = \"SELECT {key.Column} FROM {key.ToTable.Name} WHERE {key.ToTable.PrimaryKey.Name} = '{SharedContainer.AppConfigInstance.WildCard}'\";");
+                            _writer.WriteLine($"$fkresult = $db->qarray($fkquery, array($data['{col.Name}']));");
+                            _writer.WriteLine($"echo '<td>'.$fkresult['{key.Column}'].'</td>';");
+                            continue;
+                        }
+
                         if(col.IsDropdown){
                             _writer.WriteLine($"$array = array({GetColumnArray(col)});");
                             _writer.WriteLine($"echo '<td>'.$array[$data['{col.Name}']].'</td>';");

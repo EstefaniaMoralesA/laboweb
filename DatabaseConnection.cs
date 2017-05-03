@@ -69,7 +69,7 @@ namespace ABC
                 conn.Close();
 
                 conn.Open();
-                string query2 = $"SELECT k.column_name, t.constraint_type FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE (t.constraint_type='PRIMARY KEY' OR t.constraint_type='FOREIGN KEY') AND t.table_schema='{DatabaseName}' AND t.table_name='{tableName}';";
+                string query2 = $"SELECT k.column_name, t.constraint_type, k.referenced_table_name FROM information_schema.table_constraints t JOIN information_schema.key_column_usage k USING(constraint_name,table_schema,table_name) WHERE (t.constraint_type='PRIMARY KEY' OR t.constraint_type='FOREIGN KEY') AND t.table_schema='{DatabaseName}' AND t.table_name='{tableName}';";
                 cmd = new MySqlCommand(query2 ,conn);
                 sdr = cmd.ExecuteReader();
                 while(sdr.Read())
@@ -82,6 +82,7 @@ namespace ABC
                     else
                     {
                         columns[columnName].IsForeignKey = true;
+                        columns[columnName].ForeignKeyMap = new ForeignKey { ToTable = new Table(sdr[2].ToString()), Column = null};
                     }
                 }
                 conn.Close();

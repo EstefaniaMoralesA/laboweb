@@ -29,6 +29,30 @@ namespace ABC
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory.ToString(), "config.xml");
         }
 
+        static void InitForeignKeys()
+        {
+            Table[] tableArray = new Table[tables.Values.Count];
+            tables.Values.CopyTo(tableArray, 0);
+            foreach(Table table in tableArray)
+            {
+                Column[] array = new Column[table.Columns.Values.Count];
+                table.Columns.Values.CopyTo(array, 0);
+                foreach (var column in array)
+                {
+                    if (column.IsForeignKey)
+                    {
+                        Table toTable = tables[column.ForeignKeyMap.ToTable.Name];
+                        ForeignKey key = tables[table.Name].Columns[column.Name].ForeignKeyMap;
+                        tables[table.Name].Columns[column.Name].ForeignKeyMap = new ForeignKey
+                        {
+                            ToTable = toTable,
+                            Column = key.Column ?? toTable.PrimaryKey.Name
+                        };
+                    }
+                }
+            }
+        }
+
         static void Run()
         {
             JObject json = parseXML(getPath());
@@ -37,6 +61,7 @@ namespace ABC
            
             tables = SharedContainer.DbInstance.GetTables();
             readTablesFromXML(json); 
+            InitForeignKeys();
             
             foreach(Table table in tables.Values)
             {
@@ -80,6 +105,24 @@ namespace ABC
                 string[] vals = o.Split('-');
                 table.Columns[nameField].Options.Add(vals[0], vals[1]);
             }
+        }
+
+        static void parseForeignKey(string[] vals, ref Table table)
+        {
+            string nameField = vals[0];
+            string value = vals[1];
+            if (!table.Columns[nameField].IsForeignKey)
+            {
+                Console.WriteLine($"Error: column: {nameField} in table: {table.Name} is not a foreign key");
+                Environment.Exit(1);
+            }
+            table.Columns[nameField].IsForeignKeyMapped = true;
+            table.Columns[nameField].ForeignKeyMap = new ForeignKey
+            {
+                ToTable = tables[table.Columns[nameField].ForeignKeyMap.ToTable.Name],
+                Column = value
+            };
+
         }
 
         static void parseTable(JToken table)
@@ -175,6 +218,16 @@ namespace ABC
                     {
                         parseOption(JToken.Parse(optionsArrayString), ref currentTable);
                     }
+                }
+            }
+
+            if (table["ForeignKeys"] != null)
+            {
+                string value = table["ForeignKeys"].Value<string>();
+                string[] columns = value.Split(',');
+                foreach (var column in columns)
+                {
+                    parseForeignKey(column.Split('-'), ref currentTable);
                 }
             }
         }

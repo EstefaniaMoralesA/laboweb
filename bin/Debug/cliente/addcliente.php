@@ -16,7 +16,7 @@ $error = 1;
 else{
 $numeroCliente = $_POST['numeroCliente'];
 }
-if(empty($_POST['idCategoria']))
+if(!isset($_POST['idCategoria']) || $_POST['idCategoria'] == '')
 {
 $error = 1;
 }
@@ -53,7 +53,14 @@ header('Location: cliente.php');
 <input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='numeroCliente' placeholder='numeroCliente' type='text' value=''>
 </div>
 <div class='form-group'>
-<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='idCategoria' type='number' value=''>
+<?php $fkquery = 'SELECT * FROM categoria';
+$fkresult = $db->squery_rows($fkquery, array()); ?>
+<select name='idCategoria'>
+<option selected disabled value=''>Selecciona Categoria</option>
+<?php while($data = mysqli_fetch_assoc($fkresult)) : ?>
+<option value="<?php echo $data['id'];?>"><?php echo $data['nombre']; ?></option>
+<?php endwhile; ?>
+</select>
 </div>
 <div class='form-group'>
 <select name='genero'>

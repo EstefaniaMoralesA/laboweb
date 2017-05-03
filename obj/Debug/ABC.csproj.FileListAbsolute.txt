@@ -26,3 +26,14 @@ C:\xampp\htdocs\Web Project\web\bin\Debug\Newtonsoft.Json.xml
 C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.csprojResolveAssemblyReference.cache
 C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.exe
 C:\xampp\htdocs\Web Project\web\obj\Debug\ABC.pdb
+C:\xampp\htdocs\laboweb\bin\Debug\config.xml
+C:\xampp\htdocs\laboweb\bin\Debug\Database.php
+C:\xampp\htdocs\laboweb\bin\Debug\ABC.exe.config
+C:\xampp\htdocs\laboweb\bin\Debug\ABC.exe
+C:\xampp\htdocs\laboweb\bin\Debug\ABC.pdb
+C:\xampp\htdocs\laboweb\bin\Debug\MySql.Data.dll
+C:\xampp\htdocs\laboweb\bin\Debug\Newtonsoft.Json.dll
+C:\xampp\htdocs\laboweb\bin\Debug\Newtonsoft.Json.xml
+C:\xampp\htdocs\laboweb\obj\Debug\ABC.csprojResolveAssemblyReference.cache
+C:\xampp\htdocs\laboweb\obj\Debug\ABC.exe
+C:\xampp\htdocs\laboweb\obj\Debug\ABC.pdb

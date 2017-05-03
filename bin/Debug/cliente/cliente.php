@@ -26,7 +26,7 @@ echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
 <th>id</th>
 <th>nombre</th>
 <th>numeroCliente</th>
-<th>idCategoria</th>
+<th>Categoria</th>
 <th>genero</th>
 <th></th>
 <th></th>
@@ -34,13 +34,15 @@ echo 'ERROR al eliminar registro. Vuelva a intentarlo.';
 </thead>
 <tbody>
 <?php
-$resultSet = $db->squery_rows('SELECT id,nombre,numeroCliente,idCategoria,genero FROM cliente WHERE id NOT IN (1,4)', array());
+$resultSet = $db->squery_rows('SELECT id,nombre,numeroCliente,idCategoria,genero FROM cliente ', array());
 while($data = mysqli_fetch_assoc($resultSet)){
 echo '<tr>';
 echo '<td>'.$data['id'].'</td>';
 echo '<td>'.$data['nombre'].'</td>';
 echo '<td>'.$data['numeroCliente'].'</td>';
-echo '<td>'.$data['idCategoria'].'</td>';
+$fkquery = "SELECT nombre FROM categoria WHERE id = '1QQ'";
+$fkresult = $db->qarray($fkquery, array($data['idCategoria']));
+echo '<td>'.$fkresult['nombre'].'</td>';
 $array = array("0" => "masculino","1" => "femenino");
 echo '<td>'.$array[$data['genero']].'</td>';
 echo '<td><a href="editcliente.php?pk='.$data['id'].'" class="btn btn-primary" style="padding-left: 46px; padding-right: 46px;">Editar</a></td>';

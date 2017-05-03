@@ -24,7 +24,8 @@
     </Table>
     <Table Name="cliente">
         <Disable>id</Disable>
-        <HideReg>1,4</HideReg>
+        <Headers>idCategoria-Categoria</Headers>
+        <ForeignKeys>idCategoria-nombre</ForeignKeys>
         <Options Campo="genero">0-masculino,1-femenino</Options>
     </Table>
 </Abc>
