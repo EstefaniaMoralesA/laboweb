@@ -24,7 +24,7 @@ $error = 1;
 else{
 $numeroCliente = $_POST['numeroCliente'];
 }
-if(empty($_POST['idCategoria']))
+if(!isset($_POST['idCategoria']) || $_POST['idCategoria'] == '')
 {
 $error = 1;
 }
@@ -65,7 +65,17 @@ $result = getValues($db, $pk);
 <input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='numeroCliente' placeholder='numeroCliente' type='text' value='<?php echo $result['numeroCliente'] ?>'>
 </div>
 <div class='form-group'>
-<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='idCategoria' placeholder='Categoria' type='number' value='<?php echo $result['idCategoria'] ?>'>
+<?php $fkquery = 'SELECT * FROM categoria';
+$fkresult = $db->squery_rows($fkquery, array()); ?>
+<select name='idCategoria'>
+<?php while($data = mysqli_fetch_assoc($fkresult)) :
+$value = $data['id'];
+$selected='';
+if($value == $result['idCategoria'])
+{ $selected = 'selected';} ?>
+<option <?php echo $selected; ?> value="<?php echo $value;?>"><?php echo $data['nombre']; ?></option>
+<?php endwhile; ?>
+</select>
 </div>
 <div class='form-group'>
 <select name='genero'>

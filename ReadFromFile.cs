@@ -29,6 +29,30 @@ namespace ABC
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory.ToString(), "config.xml");
         }
 
+        static void InitForeignKeys()
+        {
+            Table[] tableArray = new Table[tables.Values.Count];
+            tables.Values.CopyTo(tableArray, 0);
+            foreach(Table table in tableArray)
+            {
+                Column[] array = new Column[table.Columns.Values.Count];
+                table.Columns.Values.CopyTo(array, 0);
+                foreach (var column in array)
+                {
+                    if (column.IsForeignKey)
+                    {
+                        Table toTable = tables[column.ForeignKeyMap.ToTable.Name];
+                        ForeignKey key = tables[table.Name].Columns[column.Name].ForeignKeyMap;
+                        tables[table.Name].Columns[column.Name].ForeignKeyMap = new ForeignKey
+                        {
+                            ToTable = toTable,
+                            Column = key.Column ?? toTable.PrimaryKey.Name
+                        };
+                    }
+                }
+            }
+        }
+
         static void Run()
         {
             JObject json = parseXML(getPath());
@@ -37,6 +61,7 @@ namespace ABC
            
             tables = SharedContainer.DbInstance.GetTables();
             readTablesFromXML(json); 
+            InitForeignKeys();
             
             foreach(Table table in tables.Values)
             {

@@ -33,33 +33,56 @@ namespace ABC
                 return;
             }
             _writer.WriteLine("<div class='form-group'>");
-            switch(column.DataType)
+            if(column.IsForeignKey)
             {
-                case ColumnDataType.varchar:
-                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='text' value='<?php echo $result['{column.Name}'] ?>'>");
-                break;
-                case ColumnDataType.numInt:
-                _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='number' value='<?php echo $result['{column.Name}'] ?>'>");
-                break;
-                case ColumnDataType.tinyInt:
-                    if(column.IsDropdown){
-                        _writer.WriteLine($"<select name='{column.Name}'>");
-                        _writer.WriteLine($"");                        
-                        foreach(var option in column.Options)
-                        {
-                            _writer.WriteLine($"<?php if($result['{column.Name}'] == {option.Key}) : ?>");
-                            _writer.WriteLine($"<option selected value='<?php echo $result['{column.Name}']; ?>'>{option.Value}</option>");
-                            _writer.WriteLine("<?php else : ?>");
-                            _writer.WriteLine($"<option value='{option.Key}'>{option.Value}</option>");
-                            _writer.WriteLine("<?php endif; ?>");
+                WriteForeignKeyInput(column);
+            }
+            else
+            {
+                switch(column.DataType)
+                {
+                    case ColumnDataType.varchar:
+                    _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='text' value='<?php echo $result['{column.Name}'] ?>'>");
+                    break;
+                    case ColumnDataType.numInt:
+                    _writer.WriteLine($"<input class='form-control text-box single-line input-validation-error' data-val='true' data-val-required='Campo requerido' name='{column.Name}' placeholder='{column.Header}' type='number' value='<?php echo $result['{column.Name}'] ?>'>");
+                    break;
+                    case ColumnDataType.tinyInt:
+                        if(column.IsDropdown){
+                            _writer.WriteLine($"<select name='{column.Name}'>");
+                            _writer.WriteLine($"");                        
+                            foreach(var option in column.Options)
+                            {
+                                _writer.WriteLine($"<?php if($result['{column.Name}'] == {option.Key}) : ?>");
+                                _writer.WriteLine($"<option selected value='<?php echo $result['{column.Name}']; ?>'>{option.Value}</option>");
+                                _writer.WriteLine("<?php else : ?>");
+                                _writer.WriteLine($"<option value='{option.Key}'>{option.Value}</option>");
+                                _writer.WriteLine("<?php endif; ?>");
+                            }
+                            _writer.WriteLine("</select>");
                         }
-                        _writer.WriteLine("</select>");
-                    }
-                break;
-                
+                    break;
+                    
+                }
             }
             _writer.WriteLine("</div>");
 
+        }
+
+        public void WriteForeignKeyInput(Column column)
+        {
+            _writer.WriteLine($"<?php $fkquery = 'SELECT * FROM {column.ForeignKeyMap.ToTable.Name}';");
+            _writer.WriteLine($"$fkresult = $db->squery_rows($fkquery, array()); ?>");
+            _writer.WriteLine($"<select name='{column.Name}'>");
+            _writer.WriteLine("<?php while($data = mysqli_fetch_assoc($fkresult)) :");
+            _writer.WriteLine($"$value = $data['{column.ForeignKeyMap.ToTable.PrimaryKey.Name}'];");
+            _writer.WriteLine("$selected='';");
+            _writer.WriteLine($"if($value == $result['{column.Name}'])");
+            _writer.WriteLine("{ $selected = 'selected';} ?>");
+            _writer.Write($"<option <?php echo $selected; ?> value=\"<?php echo $value;?>\">");
+            _writer.WriteLine($"<?php echo $data['{column.ForeignKeyMap.Column}']; ?></option>");
+            _writer.WriteLine("<?php endwhile; ?>");
+            _writer.WriteLine("</select>");
         }
 
         public void WriteContent(Table table)
@@ -185,7 +208,7 @@ namespace ABC
             {
                 if(!col.IsPrimaryKey)
                 {
-                    if(col.IsDropdown)
+                    if(col.IsDropdown || col.IsForeignKey)
                     {
                         _writer.WriteLine($"if(!isset($_POST['{col.Name}']) || $_POST['{col.Name}'] == '')");
                     }

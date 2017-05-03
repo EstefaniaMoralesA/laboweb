@@ -82,7 +82,7 @@ namespace ABC
                     else
                     {
                         columns[columnName].IsForeignKey = true;
-                        columns[columnName].ForeignKeyMap = new ForeignKey { ToTable = new Table(sdr[2].ToString()), Column = string.Empty};
+                        columns[columnName].ForeignKeyMap = new ForeignKey { ToTable = new Table(sdr[2].ToString()), Column = null};
                     }
                 }
                 conn.Close();
